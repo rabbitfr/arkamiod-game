@@ -188,9 +188,10 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
     }
 
     private void resetBallAtStart() {
-        System.out.println("reseting to "+(WIDTH / 2)+", "+(HEIGHT / 2f - 80));
-//        ball =  new Ball(world, WIDTH / 2f, HEIGHT / 2f - 80);
-        ball.body.setTransform((WIDTH / 2) / Arkanoid.SCALE, (HEIGHT / 2f - 80) / Arkanoid.SCALE, ball.body.getAngle());
+        platform.body.setLinearVelocity(0,0);
+        platform.body.setTransform((WIDTH / 2f) / Arkanoid.SCALE, (HEIGHT / 8f) / Arkanoid.SCALE, platform.body.getAngle());
+
+        ball.body.setTransform((WIDTH / 2) / Arkanoid.SCALE, ((HEIGHT / 8f) / Arkanoid.SCALE ) + (ball.RADIUS + platform.HEIGHT), ball.body.getAngle());
         ball.body.setLinearVelocity(0, 10f); // will launch vertical
 
     }
