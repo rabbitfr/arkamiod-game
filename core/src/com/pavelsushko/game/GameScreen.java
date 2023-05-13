@@ -2,17 +2,19 @@ package com.pavelsushko.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+
 import static com.pavelsushko.game.Arkanoid.*;
 
 public class GameScreen extends InputAdapter implements Screen, Input.TextInputListener {
@@ -21,7 +23,7 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
     private final Texture background, neonLight;
     private final World world;
     private final Wall wall;
-    private final Ball ball;
+    private Ball ball;
     private final Platform platform;
     private final Array.ArrayIterator<Ball> colorBall;
     private final Array.ArrayIterator<Brick> brickIterator;
@@ -32,6 +34,8 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
     private int worldTime;
     private boolean played;
     private String playerName;
+
+    private int remaingLives = Integer.MAX_VALUE;
 
     private Box2DDebugRenderer debugRenderer;
 
@@ -61,7 +65,7 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.setToOrtho(false, WIDTH / SCALE, HEIGHT / SCALE);
         camera.update();
-        debugRenderer.render( world, camera.combined );
+        debugRenderer.render(world, camera.combined);
         game.batch.setProjectionMatrix(camera.combined);
         update(deltaTime);
         game.batch.begin();
@@ -132,8 +136,7 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        if ((WIDTH - Wall.THICKNESS) / SCALE - Platform.WIDTH >= screenX / SCALE &&
-                Platform.WIDTH + Wall.THICKNESS / SCALE <= screenX / SCALE) {
+        if ((WIDTH - Wall.THICKNESS) / SCALE - Platform.WIDTH >= screenX / SCALE && Platform.WIDTH + Wall.THICKNESS / SCALE <= screenX / SCALE) {
             platform.body.setTransform((float) screenX / SCALE, (HEIGHT / 8f) / SCALE, 0);
         }
         return false;
@@ -150,6 +153,31 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
     }
 
     private boolean gameOver() {
+        if (isCurrentBallLost()) {
+            decrementLives();
+            if (remaingLives < 0) {
+                return true;
+            } else {
+                resetBallAtStart();
+            }
+        }
+        return false;
+    }
+
+    private void resetBallAtStart() {
+        System.out.println("reseting to "+(WIDTH / 2)+", "+(HEIGHT / 2f - 80));
+//        ball =  new Ball(world, WIDTH / 2f, HEIGHT / 2f - 80);
+        ball.body.setTransform((WIDTH / 2) / Arkanoid.SCALE, (HEIGHT / 2f - 80) / Arkanoid.SCALE, ball.body.getAngle());
+        ball.body.setLinearVelocity(0, 10f); // will launch vertical
+
+    }
+
+    private void decrementLives() {
+        remaingLives--;
+        // @Todo display
+    }
+
+        private boolean isCurrentBallLost() {
         return ball.body.getPosition().y < (platform.body.getPosition().y - Platform.HEIGHT * SCALE);
     }
 
