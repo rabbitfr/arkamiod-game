@@ -35,6 +35,9 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
     private boolean played;
     private String playerName;
 
+//    private boolean clicked = false ;
+    private boolean isPaused = true ;
+
     private int remaingLives = Integer.MAX_VALUE;
 
     private Box2DDebugRenderer debugRenderer;
@@ -61,6 +64,9 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
 
     @Override
     public void render(float deltaTime) {
+        if (isPaused)
+            deltaTime = 0f ;
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.setToOrtho(false, WIDTH / SCALE, HEIGHT / SCALE);
@@ -95,12 +101,22 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
         game.batch.end();
 
         world.step(deltaTime, 8, 4);
+
+        /**
+         * Cleanup destroyed brick bodies
+         */
         bricksToDestroy.forEach(brick -> world.destroyBody(brick.body));
         bricksToDestroy.clear();
+
+        /**
+         * Handles ball out of screen
+         */
         if (gameOver()) {
             played = true;
             game.setScreen(new MenuScreen(game));
         }
+
+
         if (!brickIterator.hasNext() && !played) {
             game.music.stop();
             win.play(1);
@@ -142,6 +158,12 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
         return false;
     }
 
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        isPaused = false;
+        return true;
+    }
+
     private void update(float deltaTime) {
         if (!played) {
             timeCount += deltaTime;
@@ -159,6 +181,7 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
                 return true;
             } else {
                 resetBallAtStart();
+                isPaused = true;
             }
         }
         return false;
