@@ -51,10 +51,10 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
         neonLight = new Texture("neon_light.png");
         world = new World(new Vector2(0, -0.05f), true);
         wall = new Wall(world, WIDTH, HEIGHT);
-        ball = new Ball(world, WIDTH / 2f, HEIGHT / 2f - 80);
         colorBall = new Array.ArrayIterator<>(new Ball(world).createMany(100));
         platform = new Platform(world, WIDTH / 2f, HEIGHT / 8f);
-        brickIterator = new Array.ArrayIterator<>(new Brick(world).createMany(10));
+        ball = new Ball(world, WIDTH / 2f, HEIGHT / 2f); //
+        brickIterator = new Array.ArrayIterator<>(new Brick(world).createMany(60));
         bricksToDestroy = new Array<>(4);
         font = new BitmapFont();
         played = false;
