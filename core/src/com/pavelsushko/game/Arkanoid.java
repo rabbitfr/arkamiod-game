@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class Arkanoid extends Game {
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
-    public static final String TITLE = "Arkanoid";
+    public static final String TITLE = "Arkamiod";
     public static final float SCALE = 60f;
     public Music music;
     public SpriteBatch batch;
