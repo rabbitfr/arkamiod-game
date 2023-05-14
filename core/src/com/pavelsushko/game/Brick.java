@@ -1,28 +1,37 @@
 package com.pavelsushko.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.List;
+
 public class Brick implements Disposable {
 
     public Body body;
     public boolean toDestroy = false;
     private final Texture texture;
-    private final float WIDTH = 0.62f;
-    private final float HEIGHT = 0.25f;
+    private final float WIDTH = 0.50f;
+    private final float HEIGHT = 0.50f;
     private World world;
 
     public Brick(World world, float x, float y) {
         create(world, x, y);
-        texture = new Texture("brick.png");
+        Texture[] values = Arkanoid.filesTexture.values().toArray(new Texture[0]);
+        Texture randomTexture = values[Arkanoid.generator.nextInt(values.length)];
+        texture = randomTexture;
+
     }
 
     public Brick(World world) {
         this.world = world;
-        texture = new Texture("brick.png");
+        Texture[] values = Arkanoid.filesTexture.values().toArray(new Texture[0]);
+        Texture randomTexture = values[Arkanoid.generator.nextInt(values.length)];
+        texture = randomTexture;
     }
 
     public void draw(SpriteBatch batch) {

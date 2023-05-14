@@ -60,7 +60,13 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
         played = false;
 
         debugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
+        updateLevel();
     }
+
+    public void updateLevel() {
+        Gdx.graphics.setTitle(TITLE+" - ["+(levels.currentLevel().level+1) +"/"+ levels.size()+"] "+ levels.currentLevel().name);
+    }
+
 
     @Override
     public void render(float deltaTime) {
@@ -87,6 +93,7 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
                 brickIterator.remove();
             }
         }
+        //video
         brickIterator.reset();
         if (!brickIterator.hasNext()) {
             wall.body.setActive(false);
@@ -97,7 +104,8 @@ public class GameScreen extends InputAdapter implements Screen, Input.TextInputL
         camera.setToOrtho(false, WIDTH, HEIGHT);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
-        font.draw(game.batch, String.format("TIME: %03d", worldTime), Wall.THICKNESS - 10, HEIGHT - Wall.THICKNESS / 3);
+        font.draw(game.batch, String.format("ENTROPY: %03d", worldTime), Wall.THICKNESS - 10, HEIGHT - Wall.THICKNESS / 3);
+        font.draw(game.batch, String.format("APPS: 3067/4096"), Wall.THICKNESS - 10 + 120, HEIGHT - Wall.THICKNESS / 3);
         game.batch.end();
 
         world.step(deltaTime, 8, 4);
